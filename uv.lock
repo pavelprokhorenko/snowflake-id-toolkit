@@ -492,7 +492,7 @@ wheels = [
 
 [[package]]
 name = "snowflake-id-toolkit"
-source = { virtual = "." }
+source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [
