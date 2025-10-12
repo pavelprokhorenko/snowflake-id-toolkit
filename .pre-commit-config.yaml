@@ -1,0 +1,49 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-yaml
+        args:
+          - --unsafe
+
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: ruff check
+        name: Check code style with Ruff
+        language: system
+        entry: uv run ruff check
+        pass_filenames: true
+        types_or:
+          - python
+          - pyi
+
+      - id: ruff format
+        name: Format code with with Ruff
+        language: system
+        entry: uv run ruff format
+        pass_filenames: true
+        types_or:
+          - python
+          - pyi
+
+      - id: mypy
+        name: Check static types with mypy
+        language: system
+        entry: uv run mypy .
+        pass_filenames: false
+        types_or:
+          - python
+          - pyi
+
+      - id: uv
+        name: Check that uv.lock file is up to date
+        language: system
+        entry: uv lock --check
+        pass_filenames: false

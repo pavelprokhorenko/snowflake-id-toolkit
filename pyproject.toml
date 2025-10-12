@@ -1,0 +1,142 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "snowflake-id-toolkit"
+dynamic = ["version"]
+description = "Snowflake ID Toolkit - Generate distributed unique IDs."
+authors = [
+  {name = "Pavel Prokhorenko", email = "prohorenkopavel74@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+keywords = [
+  "snowflake",
+  "sonyflake",
+  "id",
+  "generator",
+  "distributed",
+  "unique-id"
+]
+classifiers = [
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
+Changelog = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/blob/main/CHANGELOG.md"
+Releases = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/releases"
+Repository = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
+
+[dependency-groups]
+dev = [
+  "ipython>=8.37.0",
+  "mypy>=1.18.2",
+  "pre-commit>=4.3.0",
+  "pytest>=8.4.2",
+  "pytest-xdist>=3.8.0",
+  "ruff>=0.14.0",
+]
+
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/README.md",
+  "/LICENSE",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/snowflake_id_toolkit"]
+
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+fix = true
+
+[tool.ruff.lint]
+select = [
+  "ERA", # eradicate
+  "ANN", # flake8-annotations
+  "ASYNC", # flake8-async
+  "S", # flake8-bandit
+  "B", # flake8-bugbear
+  "A", # flake8-builtins
+  "COM", # flake8-commas
+  "C4", # flake8-comprehensions
+  "DTZ", # flake8-datetimez
+  "T10", # flake8-debugger
+  "T10", # flake8-debugger
+  "ISC", # flake8-implicit-str-concat
+  "LOG", # flake8-logging
+  "G", # flake8-logging-format
+  "INP", # flake8-no-pep420
+  "PIE", # flake8-pie
+  "T20", # flake8-print
+  "PYI", # flake8-pyi
+  "PT", # flake8-pytest-style
+  "Q", # flake8-quotes
+  "RSE", # flake8-raise
+  "RET", # flake8-return
+  "SLF", # flake8-self
+  "SIM", # flake8-simplify
+  "SLOT", # flake8-slots
+  "TID", # flake8-tidy-imports
+  "TD", # flake8-todos
+  "ARG", # flake8-unused-arguments
+  "PTH", # flake8-use-pathlib
+  "I", # isort
+  "N", # pep8-naming
+  "PERF", # Perflint
+  "E", # pycodestyle (errors)
+  "W", # pycodestyle (warnings)
+  "F", # Pyflakes
+  "PGH", # pygrep-hooks
+  "PL", # Pylint
+  "UP", # pyupgrade
+  "FURB", # refurb
+  "RUF", # Ruff-specific rules
+  "TRY", # tryceratops
+]
+ignore = [
+  "COM812" # Trailing comma missing
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 60
+line-ending = "lf"
+
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+warn_no_return = true
+namespace_packages = true
+explicit_package_bases = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_untyped_calls = false
+strict = true
+strict_equality = true
