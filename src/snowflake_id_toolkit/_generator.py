@@ -3,7 +3,6 @@ from typing import Final
 
 from snowflake_id_toolkit._exceptions import (
     LastGenerationTimestampIsGreaterError,
-    MaxSequenceHasReachedError,
     MaxTimestampHasReachedError,
 )
 
@@ -74,7 +73,6 @@ class SnowflakeIDGenerator:
 
         Raises:
             MaxTimestampHasReachedError: If timestamp exceeds max representable.
-            MaxSequenceHasReachedError: If sequence exhausted within current time step.
             LastGenerationTimestampIsGreaterError: If clock moved backwards.
         """
 
@@ -85,7 +83,9 @@ class SnowflakeIDGenerator:
 
         if current_timestamp == self._last_generation_timestamp:
             if self._sequence == self._MAX_SEQUENCE:
-                raise MaxSequenceHasReachedError
+                # Wait for the next timestamp
+                while current_timestamp == self._last_generation_timestamp:
+                    current_timestamp = self._get_current_timestamp()
             self._sequence += 1
         elif current_timestamp > self._last_generation_timestamp:
             self._sequence = 0

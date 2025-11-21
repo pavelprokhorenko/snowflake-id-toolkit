@@ -9,9 +9,5 @@ class MaxTimestampHasReachedError(OverflowError, SnowflakeIDToolkitError):
     detail: str = "Max timestamp has reached"
 
 
-class MaxSequenceHasReachedError(OverflowError, SnowflakeIDToolkitError):
-    detail: str = "Max sequence number has reached"
-
-
 class LastGenerationTimestampIsGreaterError(SnowflakeIDToolkitError):
     detail: str = "Last generation timestamp is greater than current timestamp"

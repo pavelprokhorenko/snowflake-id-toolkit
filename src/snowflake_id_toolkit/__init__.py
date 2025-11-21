@@ -4,7 +4,6 @@ Snowflake ID Toolkit - Generate distributed unique IDs.
 
 from snowflake_id_toolkit._exceptions import (
     LastGenerationTimestampIsGreaterError,
-    MaxSequenceHasReachedError,
     MaxTimestampHasReachedError,
 )
 from snowflake_id_toolkit._generator import SnowflakeIDGenerator
@@ -12,7 +11,6 @@ from snowflake_id_toolkit.twitter import TwitterSnowflakeIDGenerator
 
 __all__ = (
     "LastGenerationTimestampIsGreaterError",
-    "MaxSequenceHasReachedError",
     "MaxTimestampHasReachedError",
     "SnowflakeIDGenerator",
     "TwitterSnowflakeIDGenerator",
