@@ -14,6 +14,7 @@ class SnowflakeIDGenerator:
         _TIMESTAMP_BITS: Number of bits for timestamp.
         _NODE_ID_BITS: Number of bits for node/machine ID.
         _SEQUENCE_BITS: Number of bits for sequence number.
+        _TIME_STEP_MS: Time resolution in milliseconds (default: 1).
     """
 
     _TIMESTAMP_BITS: int
