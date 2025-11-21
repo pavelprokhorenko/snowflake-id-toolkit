@@ -9,11 +9,19 @@ from snowflake_id_toolkit._exceptions import (
 
 
 class SnowflakeIDGenerator:
+    """Base class for snowflake-like ID generators.
+
+    Subclasses must define:
+        _TIMESTAMP_BITS: Number of bits for timestamp.
+        _NODE_ID_BITS: Number of bits for node/machine ID.
+        _SEQUENCE_BITS: Number of bits for sequence number.
+    """
+
     _TIMESTAMP_BITS: int
     _NODE_ID_BITS: int
     _SEQUENCE_BITS: int
 
-    _TIME_STEP_MS: int = 1
+    _TIME_STEP_MS: int = 1  # Time resolution in milliseconds
 
     def __init__(
         self,
@@ -21,6 +29,17 @@ class SnowflakeIDGenerator:
         *,
         epoch: int = 0,
     ) -> None:
+        """Initialize the generator.
+
+        Args:
+            node_id: Unique identifier for this node/machine.
+            epoch: Custom epoch timestamp in milliseconds (default: Unix epoch).
+
+        Raises:
+            ValueError: If node_id or epoch is out of valid range.
+            MaxTimestampHasReachedError: If current time exceeds max representable.
+        """
+
         self._NODE_ID_SHIFT: Final[int] = self._SEQUENCE_BITS
         self._TIMESTAMP_SHIFT: Final[int] = self._NODE_ID_BITS + self._NODE_ID_SHIFT
 
@@ -48,6 +67,17 @@ class SnowflakeIDGenerator:
         self._last_generation_timestamp = current_timestamp
 
     def generate_next_id(self) -> int:
+        """Generate the next unique snowflake ID.
+
+        Returns:
+            A unique 64-bit integer ID.
+
+        Raises:
+            MaxTimestampHasReachedError: If timestamp exceeds max representable.
+            MaxSequenceHasReachedError: If sequence exhausted within current time step.
+            LastGenerationTimestampIsGreaterError: If clock moved backwards.
+        """
+
         current_timestamp = self._get_current_timestamp()
 
         if current_timestamp - self._epoch > self._MAX_TIMESTAMP:
