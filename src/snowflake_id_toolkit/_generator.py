@@ -1,3 +1,4 @@
+import threading
 import time
 from typing import Final
 
@@ -61,6 +62,8 @@ class SnowflakeIDGenerator:
         if current_timestamp - epoch > self._MAX_TIMESTAMP:
             raise MaxTimestampHasReachedError
 
+        self._lock = threading.Lock()
+
         self._node_id = node_id
         self._epoch = epoch
         self._sequence = 0
@@ -77,29 +80,30 @@ class SnowflakeIDGenerator:
             LastGenerationTimestampIsGreaterError: If clock moved backwards.
         """
 
-        current_timestamp = self._get_current_timestamp()
+        with self._lock:
+            current_timestamp = self._get_current_timestamp()
 
-        if current_timestamp - self._epoch > self._MAX_TIMESTAMP:
-            raise MaxTimestampHasReachedError
+            if current_timestamp - self._epoch > self._MAX_TIMESTAMP:
+                raise MaxTimestampHasReachedError
 
-        if current_timestamp == self._last_generation_timestamp:
-            if self._sequence == self._MAX_SEQUENCE:
-                # Wait for the next timestamp
-                while current_timestamp == self._last_generation_timestamp:
-                    current_timestamp = self._get_current_timestamp()
-            self._sequence += 1
-        elif current_timestamp > self._last_generation_timestamp:
-            self._sequence = 0
-        else:
-            raise LastGenerationTimestampIsGreaterError
+            if current_timestamp == self._last_generation_timestamp:
+                if self._sequence == self._MAX_SEQUENCE:
+                    # Wait for the next timestamp
+                    while current_timestamp == self._last_generation_timestamp:
+                        current_timestamp = self._get_current_timestamp()
+                self._sequence += 1
+            elif current_timestamp > self._last_generation_timestamp:
+                self._sequence = 0
+            else:
+                raise LastGenerationTimestampIsGreaterError
 
-        self._last_generation_timestamp = current_timestamp
+            self._last_generation_timestamp = current_timestamp
 
-        return (
-            (current_timestamp - self._epoch) << self._TIMESTAMP_SHIFT
-            | self._node_id << self._NODE_ID_SHIFT
-            | self._sequence
-        )
+            return (
+                (current_timestamp - self._epoch) << self._TIMESTAMP_SHIFT
+                | self._node_id << self._NODE_ID_SHIFT
+                | self._sequence
+            )
 
     @classmethod
     def _get_current_timestamp(cls) -> int:
