@@ -117,7 +117,8 @@ select = [
   "TRY", # tryceratops
 ]
 ignore = [
-  "COM812" # Trailing comma missing
+  "COM812", # Trailing comma missing
+  "TRY003", # Avoid specifying long messages outside the exception class
 ]
 
 [tool.ruff.format]
@@ -127,6 +128,7 @@ line-ending = "lf"
 
 
 [tool.mypy]
+mypy_path = "src"
 python_version = "3.10"
 warn_unused_configs = true
 warn_unused_ignores = true
