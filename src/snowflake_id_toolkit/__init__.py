@@ -7,9 +7,11 @@ from snowflake_id_toolkit._exceptions import (
     MaxTimestampHasReachedError,
 )
 from snowflake_id_toolkit._generator import SnowflakeIDGenerator
+from snowflake_id_toolkit.instagram import InstagramSnowflakeIDGenerator
 from snowflake_id_toolkit.twitter import TwitterSnowflakeIDGenerator
 
 __all__ = (
+    "InstagramSnowflakeIDGenerator",
     "LastGenerationTimestampIsGreaterError",
     "MaxTimestampHasReachedError",
     "SnowflakeIDGenerator",
