@@ -5,7 +5,7 @@ A Python toolkit for generating snowflake-like unique IDs.
 ## Supported Implementations
 
 - **Twitter Snowflake** - 64-bit IDs with ~69 years of timestamps, 1024 nodes, 4096 IDs per millisecond per node
-- _**Instagram Snowflake** (coming soon)_
+- **Instagram Snowflake** - 64-bit IDs with ~69 years of timestamps, 8192 shards, 1024 IDs per millisecond per shard
 - _**Sony Sonyflake** (coming soon)_
 
 ## Installation
@@ -28,16 +28,16 @@ snowflake_id = generator.generate_next_id()
 
 ## Comparison with Other ID Strategies
 
-| Feature                | Snowflake    | UUIDv4    | UUIDv7        | Auto-increment |
-|------------------------|--------------|-----------|---------------|----------------|
-| Size                   | 64 bits      | 128 bits  | 128 bits      | 32-64 bits     |
-| Sortable by time       | ✅            | ❌         | ✅             | ✅              |
-| Distributed generation | ✅            | ✅         | ✅             | ❌              |
-| No coordination needed | ⚠️           | ✅         | ✅             | ❌              |
-| DB Index-friendly      | ✅            | ❌         | ⚠️            | ✅              |
-| Predictability         | Medium       | None      | Low           | High           |
-| Throughput             | ~4M/sec/node | Unlimited | Unlimited     | DB-limited     |
-| Relative speed         | ~5.2x        | ~1.1x     | 1x (baseline) | N/A (DB-bound) |
+| Feature                | Snowflake          | UUIDv4    | UUIDv7        | Auto-increment |
+|------------------------|--------------------|-----------|---------------|----------------|
+| Size                   | 64 bits            | 128 bits  | 128 bits      | 32-64 bits     |
+| Sortable by time       | ✅                  | ❌         | ✅             | ✅              |
+| Distributed generation | ✅                  | ✅         | ✅             | ❌              |
+| No coordination needed | ⚠️                 | ✅         | ✅             | ❌              |
+| DB Index-friendly      | ✅                  | ❌         | ⚠️            | ✅              |
+| Predictability         | Medium             | None      | Low           | High           |
+| Throughput             | 4,096,000/sec/node | Unlimited | Unlimited     | DB-limited     |
+| Relative speed         | ~5.2x              | ~1.1x     | 1x (baseline) | N/A (DB-bound) |
 
 ### When to Use
 

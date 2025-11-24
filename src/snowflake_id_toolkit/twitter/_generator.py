@@ -11,8 +11,8 @@ class TwitterSnowflakeIDGenerator(SnowflakeIDGenerator):
 
     Capacity:
         - ~69 years of timestamps (from epoch)
-        - 1024 unique nodes
-        - 4096 IDs per millisecond per node
+        - 1024 unique nodes (2^10)
+        - 4096 IDs per millisecond per node (2^12)
 
     Example:
         >>> generator = TwitterSnowflakeIDGenerator(
