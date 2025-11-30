@@ -30,27 +30,21 @@ class SnowflakeID(int):
         Extract timestamp in milliseconds since Unix epoch.
         """
 
-        timestamp_shift = self._config.sequence_bits + self._config.node_id_bits
-        timestamp_mask = (1 << self._config.timestamp_bits) - 1
-        relative_timestamp = (int(self) >> timestamp_shift) & timestamp_mask
-        return (relative_timestamp * self._config.time_step_ms) + epoch
+        return ((self >> self._config.timestamp_shift) + epoch) * self._config.time_step_ms
 
     def node_id(self) -> int:
         """
         Extract node ID component from ID.
         """
 
-        node_id_shift = self._config.sequence_bits
-        node_id_mask = (1 << self._config.node_id_bits) - 1
-        return (int(self) >> node_id_shift) & node_id_mask
+        return (self >> self._config.node_id_shift) & self._config.max_node_id
 
     def sequence(self) -> int:
         """
         Extract sequence component from ID.
         """
 
-        sequence_mask = (1 << self._config.sequence_bits) - 1
-        return int(self) & sequence_mask
+        return self & self._config.max_sequence
 
     def as_bytes(self) -> bytes:
         """
