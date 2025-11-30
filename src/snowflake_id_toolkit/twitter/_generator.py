@@ -1,8 +1,9 @@
 from snowflake_id_toolkit._generator import SnowflakeIDGenerator
 from snowflake_id_toolkit.twitter._config import TwitterSnowflakeConfig
+from snowflake_id_toolkit.twitter._id import TwitterSnowflakeID
 
 
-class TwitterSnowflakeIDGenerator(SnowflakeIDGenerator[TwitterSnowflakeConfig]):
+class TwitterSnowflakeIDGenerator(SnowflakeIDGenerator[TwitterSnowflakeConfig, TwitterSnowflakeID]):
     """Twitter's Snowflake ID generator.
 
     Generates 64-bit IDs that are roughly time-sortable.
@@ -23,3 +24,4 @@ class TwitterSnowflakeIDGenerator(SnowflakeIDGenerator[TwitterSnowflakeConfig]):
     """
 
     _config_cls = TwitterSnowflakeConfig
+    _id_cls = TwitterSnowflakeID

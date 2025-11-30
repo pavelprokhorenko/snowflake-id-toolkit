@@ -1,8 +1,9 @@
 from snowflake_id_toolkit._generator import SnowflakeIDGenerator
 from snowflake_id_toolkit.instagram._config import InstagramSnowflakeConfig
+from snowflake_id_toolkit.instagram._id import InstagramSnowflakeID
 
 
-class InstagramSnowflakeIDGenerator(SnowflakeIDGenerator[InstagramSnowflakeConfig]):
+class InstagramSnowflakeIDGenerator(SnowflakeIDGenerator[InstagramSnowflakeConfig, InstagramSnowflakeID]):
     """Instagram's Snowflake ID generator.
 
     Generates unsigned 64-bit integers that are roughly time-sortable.
@@ -24,3 +25,4 @@ class InstagramSnowflakeIDGenerator(SnowflakeIDGenerator[InstagramSnowflakeConfi
     """
 
     _config_cls = InstagramSnowflakeConfig
+    _id_cls = InstagramSnowflakeID

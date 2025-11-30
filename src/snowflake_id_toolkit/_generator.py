@@ -1,24 +1,27 @@
 import threading
 import time
-from typing import Final, Generic, TypeVar
+from typing import Any, Final, Generic, TypeVar
 
 from snowflake_id_toolkit._config import SnowflakeIDConfig
 from snowflake_id_toolkit._exceptions import (
     LastGenerationTimestampIsGreaterError,
     MaxTimestampHasReachedError,
 )
+from snowflake_id_toolkit._id import SnowflakeID
 
 TConfig = TypeVar("TConfig", bound=SnowflakeIDConfig)
+TID = TypeVar("TID", bound=SnowflakeID[Any])
 
 
-class SnowflakeIDGenerator(Generic[TConfig]):
+class SnowflakeIDGenerator(Generic[TConfig, TID]):
     """Base class for snowflake-like ID generators.
 
     Uses a configuration class to define bit layout and time resolution.
-    Subclasses must set _config_cls to a class implementing SnowflakeIDConfig.
+    Subclasses must set _config_cls and _id_cls to classes implementing SnowflakeIDConfig and SnowflakeID respectively.
     """
 
     _config_cls: type[TConfig]
+    _id_cls: type[TID]
 
     def __init__(
         self,
@@ -65,11 +68,11 @@ class SnowflakeIDGenerator(Generic[TConfig]):
         self._sequence = 0
         self._last_generation_timestamp = current_timestamp
 
-    def generate_next_id(self) -> int:
+    def generate_next_id(self) -> TID:
         """Generate the next unique snowflake ID.
 
         Returns:
-            A unique 64-bit integer ID.
+            A unique SnowflakeID instance.
 
         Raises:
             MaxTimestampHasReachedError: If timestamp exceeds max representable.
@@ -95,7 +98,7 @@ class SnowflakeIDGenerator(Generic[TConfig]):
 
             self._last_generation_timestamp = current_timestamp
 
-            return (
+            return self._id_cls(
                 (current_timestamp - self._epoch) << self._TIMESTAMP_SHIFT
                 | self._node_id << self._NODE_ID_SHIFT
                 | self._sequence
