@@ -1,18 +1,40 @@
-from typing import ClassVar
+from dataclasses import dataclass
+from functools import cached_property
 
 
+@dataclass(frozen=True, slots=True)
 class SnowflakeIDConfig:
-    """Abstract base class for snowflake-like ID configuration.
+    """Configuration for snowflake-like ID.
 
-    Subclasses must define:
-        TIMESTAMP_BITS: Number of bits for timestamp.
-        NODE_ID_BITS: Number of bits for node/machine ID.
-        SEQUENCE_BITS: Number of bits for sequence number.
-        TIME_STEP_MS: Time resolution in milliseconds (default: 1).
+    Attributes:
+        timestamp_bits: Number of bits for timestamp.
+        node_id_bits: Number of bits for node/machine ID.
+        sequence_bits: Number of bits for sequence number.
+        time_step_ms: Time resolution in milliseconds (default: 1).
     """
 
-    TIMESTAMP_BITS: ClassVar[int]
-    NODE_ID_BITS: ClassVar[int]
-    SEQUENCE_BITS: ClassVar[int]
+    timestamp_bits: int
+    node_id_bits: int
+    sequence_bits: int
 
-    TIME_STEP_MS: ClassVar[int] = 1
+    time_step_ms: int = 1
+
+    @cached_property
+    def node_id_shift(self) -> int:
+        return self.sequence_bits
+
+    @cached_property
+    def timestamp_shift(self) -> int:
+        return self.node_id_bits + self.node_id_shift
+
+    @cached_property
+    def max_timestamp(self) -> int:
+        return -1 ^ (-1 << self.timestamp_bits)
+
+    @cached_property
+    def max_node_id(self) -> int:
+        return -1 ^ (-1 << self.node_id_bits)
+
+    @cached_property
+    def max_sequence(self) -> int:
+        return -1 ^ (-1 << self.sequence_bits)

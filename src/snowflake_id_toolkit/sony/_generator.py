@@ -1,9 +1,9 @@
 from snowflake_id_toolkit._generator import SnowflakeIDGenerator
-from snowflake_id_toolkit.sony._config import SonyflakeConfig
+from snowflake_id_toolkit.sony._config import SONYFLAKE_CONFIG
 from snowflake_id_toolkit.sony._id import SonyflakeID
 
 
-class SonyflakeIDGenerator(SnowflakeIDGenerator[SonyflakeConfig, SonyflakeID]):
+class SonyflakeIDGenerator(SnowflakeIDGenerator[SonyflakeID]):
     """Sony's Sonyflake ID generator.
 
     Generates 64-bit IDs that are roughly time-sortable with extended lifespan.
@@ -55,5 +55,6 @@ class SonyflakeIDGenerator(SnowflakeIDGenerator[SonyflakeConfig, SonyflakeID]):
         >>> generator.generate_next_id()
     """
 
-    _config_cls = SonyflakeConfig
+    _config = SONYFLAKE_CONFIG
+
     _id_cls = SonyflakeID

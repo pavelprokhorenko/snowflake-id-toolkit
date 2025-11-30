@@ -1,8 +1,8 @@
 from snowflake_id_toolkit._id import SnowflakeID
-from snowflake_id_toolkit.sony._config import SonyflakeConfig
+from snowflake_id_toolkit.sony._config import SONYFLAKE_CONFIG
 
 
-class SonyflakeID(SnowflakeID[SonyflakeConfig]):
+class SonyflakeID(SnowflakeID):
     """Sonyflake ID.
 
     A 64-bit integer ID that encodes timestamp, node ID, and sequence number.
@@ -11,4 +11,4 @@ class SonyflakeID(SnowflakeID[SonyflakeConfig]):
         [1 bit unused][39 bits timestamp][8 bits node ID][16 bits sequence]
     """
 
-    _config_cls = SonyflakeConfig
+    _config = SONYFLAKE_CONFIG
