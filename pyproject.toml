@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "snowflake-id-toolkit"
 dynamic = ["version"]
-description = "Snowflake ID Toolkit - Generate distributed unique IDs."
+description = "Python toolkit for generating Twitter Snowflake & Sonyflake IDs"
 authors = [
   {name = "Pavel Prokhorenko", email = "prohorenkopavel74@gmail.com"}
 ]

@@ -1,28 +1,27 @@
 import threading
 import time
-from typing import Final
+from typing import Generic, TypeVar
 
+from snowflake_id_toolkit._config import SnowflakeIDConfig
 from snowflake_id_toolkit._exceptions import (
     LastGenerationTimestampIsGreaterError,
     MaxTimestampHasReachedError,
 )
+from snowflake_id_toolkit._id import SnowflakeID
+
+TID = TypeVar("TID", bound=SnowflakeID)
 
 
-class SnowflakeIDGenerator:
+class SnowflakeIDGenerator(Generic[TID]):
     """Base class for snowflake-like ID generators.
 
-    Subclasses must define:
-        _TIMESTAMP_BITS: Number of bits for timestamp.
-        _NODE_ID_BITS: Number of bits for node/machine ID.
-        _SEQUENCE_BITS: Number of bits for sequence number.
-        _TIME_STEP_MS: Time resolution in milliseconds (default: 1).
+    Uses a configuration instance to define bit layout and time resolution.
+    Subclasses must set _config and _id_cls.
     """
 
-    _TIMESTAMP_BITS: int
-    _NODE_ID_BITS: int
-    _SEQUENCE_BITS: int
+    _config: SnowflakeIDConfig
 
-    _TIME_STEP_MS: int = 1  # Time resolution in milliseconds
+    _id_cls: type[TID]
 
     def __init__(
         self,
@@ -41,25 +40,18 @@ class SnowflakeIDGenerator:
             MaxTimestampHasReachedError: If current time exceeds max representable.
         """
 
-        self._NODE_ID_SHIFT: Final[int] = self._SEQUENCE_BITS
-        self._TIMESTAMP_SHIFT: Final[int] = self._NODE_ID_BITS + self._NODE_ID_SHIFT
+        if not 0 <= node_id <= self._config.max_node_id:
+            raise ValueError(f"Node ID must be between 0 and {self._config.max_node_id}")
 
-        self._MAX_TIMESTAMP: Final[int] = -1 ^ (-1 << self._TIMESTAMP_BITS)
-        self._MAX_NODE_ID: Final[int] = -1 ^ (-1 << self._NODE_ID_BITS)
-        self._MAX_SEQUENCE: Final[int] = -1 ^ (-1 << self._SEQUENCE_BITS)
-
-        if not 0 <= node_id <= self._MAX_NODE_ID:
-            raise ValueError(f"Node ID must be between 0 and {self._MAX_NODE_ID}")
-
-        if not 0 <= epoch <= self._MAX_TIMESTAMP:
-            raise ValueError(f"Epoch must be between 0 and {self._MAX_TIMESTAMP}")
+        if not 0 <= epoch <= self._config.max_timestamp:
+            raise ValueError(f"Epoch must be between 0 and {self._config.max_timestamp}")
 
         current_timestamp = self._get_current_timestamp()
 
         if epoch > current_timestamp:
             raise ValueError("Epoch cannot be in the future")
 
-        if current_timestamp - epoch > self._MAX_TIMESTAMP:
+        if current_timestamp - epoch > self._config.max_timestamp:
             raise MaxTimestampHasReachedError
 
         self._lock = threading.Lock()
@@ -69,11 +61,11 @@ class SnowflakeIDGenerator:
         self._sequence = 0
         self._last_generation_timestamp = current_timestamp
 
-    def generate_next_id(self) -> int:
+    def generate_next_id(self) -> TID:
         """Generate the next unique snowflake ID.
 
         Returns:
-            A unique 64-bit integer ID.
+            A unique SnowflakeID instance.
 
         Raises:
             MaxTimestampHasReachedError: If timestamp exceeds max representable.
@@ -83,11 +75,11 @@ class SnowflakeIDGenerator:
         with self._lock:
             current_timestamp = self._get_current_timestamp()
 
-            if current_timestamp - self._epoch > self._MAX_TIMESTAMP:
+            if current_timestamp - self._epoch > self._config.max_timestamp:
                 raise MaxTimestampHasReachedError
 
             if current_timestamp == self._last_generation_timestamp:
-                if self._sequence == self._MAX_SEQUENCE:
+                if self._sequence == self._config.max_sequence:
                     # Wait for the next timestamp
                     while current_timestamp == self._last_generation_timestamp:
                         current_timestamp = self._get_current_timestamp()
@@ -99,12 +91,12 @@ class SnowflakeIDGenerator:
 
             self._last_generation_timestamp = current_timestamp
 
-            return (
-                (current_timestamp - self._epoch) << self._TIMESTAMP_SHIFT
-                | self._node_id << self._NODE_ID_SHIFT
+            return self._id_cls(
+                (current_timestamp - self._epoch) << self._config.timestamp_shift
+                | self._node_id << self._config.node_id_shift
                 | self._sequence
             )
 
     @classmethod
     def _get_current_timestamp(cls) -> int:
-        return time.time_ns() // (1_000_000 * cls._TIME_STEP_MS)
+        return time.time_ns() // (1_000_000 * cls._config.time_step_ms)
