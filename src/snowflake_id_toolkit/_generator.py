@@ -1,28 +1,24 @@
 import threading
 import time
-from typing import Final
+from typing import Final, Generic, TypeVar
 
+from snowflake_id_toolkit._config import SnowflakeIDConfig
 from snowflake_id_toolkit._exceptions import (
     LastGenerationTimestampIsGreaterError,
     MaxTimestampHasReachedError,
 )
 
+TConfig = TypeVar("TConfig", bound=SnowflakeIDConfig)
 
-class SnowflakeIDGenerator:
+
+class SnowflakeIDGenerator(Generic[TConfig]):
     """Base class for snowflake-like ID generators.
 
-    Subclasses must define:
-        _TIMESTAMP_BITS: Number of bits for timestamp.
-        _NODE_ID_BITS: Number of bits for node/machine ID.
-        _SEQUENCE_BITS: Number of bits for sequence number.
-        _TIME_STEP_MS: Time resolution in milliseconds (default: 1).
+    Uses a configuration class to define bit layout and time resolution.
+    Subclasses must set _config_cls to a class implementing SnowflakeIDConfig.
     """
 
-    _TIMESTAMP_BITS: int
-    _NODE_ID_BITS: int
-    _SEQUENCE_BITS: int
-
-    _TIME_STEP_MS: int = 1  # Time resolution in milliseconds
+    _config_cls: type[TConfig]
 
     def __init__(
         self,
@@ -41,12 +37,12 @@ class SnowflakeIDGenerator:
             MaxTimestampHasReachedError: If current time exceeds max representable.
         """
 
-        self._NODE_ID_SHIFT: Final[int] = self._SEQUENCE_BITS
-        self._TIMESTAMP_SHIFT: Final[int] = self._NODE_ID_BITS + self._NODE_ID_SHIFT
+        self._NODE_ID_SHIFT: Final[int] = self._config_cls.SEQUENCE_BITS
+        self._TIMESTAMP_SHIFT: Final[int] = self._config_cls.NODE_ID_BITS + self._NODE_ID_SHIFT
 
-        self._MAX_TIMESTAMP: Final[int] = -1 ^ (-1 << self._TIMESTAMP_BITS)
-        self._MAX_NODE_ID: Final[int] = -1 ^ (-1 << self._NODE_ID_BITS)
-        self._MAX_SEQUENCE: Final[int] = -1 ^ (-1 << self._SEQUENCE_BITS)
+        self._MAX_TIMESTAMP: Final[int] = -1 ^ (-1 << self._config_cls.TIMESTAMP_BITS)
+        self._MAX_NODE_ID: Final[int] = -1 ^ (-1 << self._config_cls.NODE_ID_BITS)
+        self._MAX_SEQUENCE: Final[int] = -1 ^ (-1 << self._config_cls.SEQUENCE_BITS)
 
         if not 0 <= node_id <= self._MAX_NODE_ID:
             raise ValueError(f"Node ID must be between 0 and {self._MAX_NODE_ID}")
@@ -107,4 +103,4 @@ class SnowflakeIDGenerator:
 
     @classmethod
     def _get_current_timestamp(cls) -> int:
-        return time.time_ns() // (1_000_000 * cls._TIME_STEP_MS)
+        return time.time_ns() // (1_000_000 * cls._config_cls.TIME_STEP_MS)
