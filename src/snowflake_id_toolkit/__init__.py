@@ -2,21 +2,28 @@
 Snowflake ID Toolkit - Generate distributed unique IDs.
 """
 
+from snowflake_id_toolkit._config import SnowflakeIDConfig
 from snowflake_id_toolkit._exceptions import (
     LastGenerationTimestampIsGreaterError,
     MaxTimestampHasReachedError,
 )
 from snowflake_id_toolkit._generator import SnowflakeIDGenerator
-from snowflake_id_toolkit.instagram import InstagramSnowflakeIDGenerator
-from snowflake_id_toolkit.sony import SonyflakeIDGenerator
-from snowflake_id_toolkit.twitter import TwitterSnowflakeIDGenerator
+from snowflake_id_toolkit._id import SnowflakeID
+from snowflake_id_toolkit.instagram import InstagramSnowflakeID, InstagramSnowflakeIDGenerator
+from snowflake_id_toolkit.sony import SonyflakeID, SonyflakeIDGenerator
+from snowflake_id_toolkit.twitter import TwitterSnowflakeID, TwitterSnowflakeIDGenerator
 
 __all__ = (
+    "InstagramSnowflakeID",
     "InstagramSnowflakeIDGenerator",
     "LastGenerationTimestampIsGreaterError",
     "MaxTimestampHasReachedError",
+    "SnowflakeID",
+    "SnowflakeIDConfig",
     "SnowflakeIDGenerator",
+    "SonyflakeID",
     "SonyflakeIDGenerator",
+    "TwitterSnowflakeID",
     "TwitterSnowflakeIDGenerator",
     "__version__",
 )

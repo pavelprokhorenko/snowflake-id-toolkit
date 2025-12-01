@@ -1,3 +1,7 @@
 from snowflake_id_toolkit.sony._generator import SonyflakeIDGenerator
+from snowflake_id_toolkit.sony._id import SonyflakeID
 
-__all__ = ("SonyflakeIDGenerator",)
+__all__ = (
+    "SonyflakeID",
+    "SonyflakeIDGenerator",
+)
