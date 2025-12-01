@@ -46,7 +46,7 @@ class SnowflakeIDGenerator(Generic[TID]):
         if not 0 <= epoch <= self._config.max_timestamp:
             raise ValueError(f"Epoch must be between 0 and {self._config.max_timestamp}")
 
-        current_timestamp = self._get_current_timestamp()
+        current_timestamp = self.get_current_timestamp()
 
         if epoch > current_timestamp:
             raise ValueError("Epoch cannot be in the future")
@@ -73,7 +73,7 @@ class SnowflakeIDGenerator(Generic[TID]):
         """
 
         with self._lock:
-            current_timestamp = self._get_current_timestamp()
+            current_timestamp = self.get_current_timestamp()
 
             if current_timestamp - self._epoch > self._config.max_timestamp:
                 raise MaxTimestampHasReachedError
@@ -82,7 +82,7 @@ class SnowflakeIDGenerator(Generic[TID]):
                 if self._sequence == self._config.max_sequence:
                     # Wait for the next timestamp
                     while current_timestamp == self._last_generation_timestamp:
-                        current_timestamp = self._get_current_timestamp()
+                        current_timestamp = self.get_current_timestamp()
                 self._sequence += 1
             elif current_timestamp > self._last_generation_timestamp:
                 self._sequence = 0
@@ -98,5 +98,32 @@ class SnowflakeIDGenerator(Generic[TID]):
             )
 
     @classmethod
-    def _get_current_timestamp(cls) -> int:
+    def get_current_timestamp(cls) -> int:
+        """Get the current timestamp in the appropriate units for this generator.
+
+        For generators with 1ms resolution (Twitter, Instagram), returns milliseconds.
+        For generators with 10ms resolution (Sonyflake), returns 10-millisecond units.
+
+        This method should be used when setting a custom epoch to ensure the correct
+        time resolution is used for each generator type.
+
+        Returns:
+            Current timestamp in generator-specific units.
+
+        Example:
+            >>> # For Twitter/Instagram (1ms resolution)
+            >>> current_epoch = (
+            ...     TwitterSnowflakeIDGenerator.get_current_timestamp()
+            ... )
+            >>> generator = TwitterSnowflakeIDGenerator(
+            ...     node_id=0, epoch=current_epoch
+            ... )
+            >>>
+            >>> # For Sonyflake (10ms resolution)
+            >>> current_epoch = SonyflakeIDGenerator.get_current_timestamp()
+            >>> generator = SonyflakeIDGenerator(
+            ...     node_id=0, epoch=current_epoch
+            ... )
+        """
+
         return time.time_ns() // (1_000_000 * cls._config.time_step_ms)

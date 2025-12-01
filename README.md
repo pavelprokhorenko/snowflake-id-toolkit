@@ -224,15 +224,16 @@ cursor.execute("INSERT INTO events (id) VALUES (?)", (int(snowflake_id),))
 **IMPORTANT:** Always set a custom epoch close to your project's start date. Using epoch=0 (Unix epoch, 1970) wastes timestamp bits and significantly reduces your ID lifespan.
 
 ```python
-import time
+from snowflake_id_toolkit import TwitterSnowflakeIDGenerator, SonyflakeIDGenerator
 
-# RECOMMENDED: Use current time as epoch for new projects
-current_epoch = int(time.time() * 1000)
+# RECOMMENDED: Use get_current_timestamp() for correct time resolution
+# For Twitter/Instagram (1ms resolution)
+current_epoch = TwitterSnowflakeIDGenerator.get_current_timestamp()
+generator = TwitterSnowflakeIDGenerator(node_id=0, epoch=current_epoch)
 
-generator = TwitterSnowflakeIDGenerator(
-    node_id=0,
-    epoch=current_epoch
-)
+# For Sonyflake (10ms resolution)
+current_epoch = SonyflakeIDGenerator.get_current_timestamp()
+generator = SonyflakeIDGenerator(node_id=0, epoch=current_epoch)
 ```
 
 **Why custom epochs matter:**
@@ -244,7 +245,7 @@ generator = TwitterSnowflakeIDGenerator(
 - Twitter: `1288834974657` (2010-11-04)
 - Instagram: `1314220021721` (2011-08-24)
 - Discord: `1420070400000` (2015-01-01)
-- **Your project:** Use current timestamp when initializing
+- **Your project:** Use `get_current_timestamp()` when initializing
 
 ### Error Handling
 
