@@ -50,7 +50,7 @@ class SonyflakeIDGenerator(SnowflakeIDGenerator[SonyflakeID]):
 
     Example:
         >>> generator = SonyflakeIDGenerator(
-        ...     node_id=0, epoch=173566440000
+        ...     node_id=0, epoch=173568960000
         ... )
         >>> generator.generate_next_id()
     """

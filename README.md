@@ -78,7 +78,7 @@ from snowflake_id_toolkit import TwitterSnowflakeIDGenerator
 
 generator = TwitterSnowflakeIDGenerator(
     node_id=42,
-    epoch=1288834974657  # 2010-11-04T08:42:54.657Z
+    epoch=1288834974657  # 2010-11-04T01:42:54.657Z
 )
 ```
 
@@ -110,7 +110,7 @@ from snowflake_id_toolkit import InstagramSnowflakeIDGenerator
 
 generator = InstagramSnowflakeIDGenerator(
     node_id=100,
-    epoch=1314220021721  # 2011-08-25T04:07:01.721Z
+    epoch=1314220021721  # 2011-08-24T21:07:01.721Z
 )
 ```
 
@@ -142,7 +142,7 @@ from snowflake_id_toolkit import SonyflakeIDGenerator
 
 generator = SonyflakeIDGenerator(
     node_id=5,
-    epoch=173566440000  # 2025-01-01T00:00:00.00Z
+    epoch=173568960000  # 2025-01-01T00:00:00.00Z
 )
 ```
 
@@ -314,11 +314,11 @@ generator = TwitterSnowflakeIDGenerator(
 ## Comparison with Other ID Strategies
 
 ### UUIDv4
-**Sortable by time:** ❌ No - completely random
-**Distributed generation:** ✅ Yes - zero coordination
-**DB index-friendly:** ❌ Poor - random inserts cause 50-70% fragmentation
-**Size:** 128-bit (16 bytes) - 2x larger than Snowflake
-**Throughput:** Unlimited (no sequence coordination)
+- **Sortable by time:** ❌ No - completely random
+- **Distributed generation:** ✅ Yes - zero coordination
+- **DB index-friendly:** ❌ Poor - random inserts cause 50-70% fragmentation
+- **Size:** 128-bit (16 bytes) - 2x larger than Snowflake
+- **Throughput:** Unlimited (no sequence coordination)
 
 **Database impact:** Random distribution causes severe index fragmentation, 10-100x write amplification. 2x larger storage (128-bit vs 64-bit), but real-world indexes can be 2-2.5x larger due to fragmentation overhead.
 
@@ -327,11 +327,11 @@ generator = TwitterSnowflakeIDGenerator(
 ---
 
 ### UUIDv7
-**Sortable by time:** ✅ Yes - millisecond precision (48-bit timestamp)
-**Distributed generation:** ✅ Yes - no coordination needed
-**DB index-friendly:** ⚠️ Moderate - better than v4, worse than Snowflake
-**Size:** 128-bit (16 bytes) - 2x larger than Snowflake
-**Throughput:** Unlimited (74 random bits for uniqueness)
+- **Sortable by time:** ✅ Yes - millisecond precision (48-bit timestamp)
+- **Distributed generation:** ✅ Yes - no coordination needed
+- **DB index-friendly:** ⚠️ Moderate - better than v4, worse than Snowflake
+- **Size:** 128-bit (16 bytes) - 2x larger than Snowflake
+- **Throughput:** Unlimited (74 random bits for uniqueness)
 
 **Database impact:** Time-ordered prefix helps, but random suffix still causes 15-25% fragmentation and 2x slower inserts than Snowflake IDs.
 
@@ -340,11 +340,11 @@ generator = TwitterSnowflakeIDGenerator(
 ---
 
 ### ULID
-**Sortable by time:** ✅ Yes - millisecond precision (48-bit timestamp)
-**Distributed generation:** ✅ Yes - no coordination needed
-**DB index-friendly:** ⚠️ Moderate - similar to UUIDv7
-**Size:** 128-bit (16 bytes) - 2x larger than Snowflake
-**Throughput:** Unlimited (80 random bits)
+- **Sortable by time:** ✅ Yes - millisecond precision (48-bit timestamp)
+- **Distributed generation:** ✅ Yes - no coordination needed
+- **DB index-friendly:** ⚠️ Moderate - similar to UUIDv7
+- **Size:** 128-bit (16 bytes) - 2x larger than Snowflake
+- **Throughput:** Unlimited (80 random bits)
 
 **String format:** 26-character Crockford Base32 (`01ARZ3NDEKTSV4RRFFQ69G5FAV`) - lexicographically sortable, more human-friendly than hex UUIDs.
 
@@ -355,11 +355,11 @@ generator = TwitterSnowflakeIDGenerator(
 ---
 
 ### KSUID
-**Sortable by time:** ✅ Yes - **second precision only** (32-bit timestamp)
-**Distributed generation:** ✅ Yes - no coordination needed
-**DB index-friendly:** ❌ Poor - 128 random bits cause significant fragmentation
-**Size:** 160-bit (20 bytes) - 2.5x larger than Snowflake
-**Throughput:** Unlimited (large random space)
+- **Sortable by time:** ✅ Yes - **second precision only** (32-bit timestamp)
+- **Distributed generation:** ✅ Yes - no coordination needed
+- **DB index-friendly:** ❌ Poor - 128 random bits cause significant fragmentation
+- **Size:** 160-bit (20 bytes) - 2.5x larger than Snowflake
+- **Throughput:** Unlimited (large random space)
 
 **Limitations:** Only second-level precision means IDs within the same second are randomly ordered. Much larger than alternatives with worse database performance.
 
@@ -370,11 +370,11 @@ generator = TwitterSnowflakeIDGenerator(
 ---
 
 ### Auto-increment
-**Sortable by time:** ✅ Yes - monotonically increasing
-**Distributed generation:** ❌ No - database coordination required
-**DB index-friendly:** ✅ Excellent - perfectly sequential
-**Size:** 32-bit (4 bytes) or 64-bit (8 bytes) - most compact
-**Throughput:** DB-limited - bottlenecked by database writes
+- **Sortable by time:** ✅ Yes - monotonically increasing
+- **Distributed generation:** ❌ No - database coordination required
+- **DB index-friendly:** ✅ Excellent - perfectly sequential
+- **Size:** 32-bit (4 bytes) or 64-bit (8 bytes) - most compact
+- **Throughput:** DB-limited - bottlenecked by database writes
 
 **Distributed challenges:** Cannot scale horizontally, single point of failure, impossible offline generation. All ID generation funnels through database.
 
@@ -385,11 +385,11 @@ generator = TwitterSnowflakeIDGenerator(
 ---
 
 ### Snowflake IDs (This Toolkit)
-**Sortable by time:** ✅ Yes - 1ms (Twitter/Instagram) or 10ms (Sonyflake) precision
-**Distributed generation:** ✅ Yes - only requires unique node IDs
-**DB index-friendly:** ✅ Excellent - time-ordered, minimal fragmentation
-**Size:** 64-bit (8 bytes) - half the size of UUIDs
-**Throughput:** 4.1-6.5M IDs/sec per node (deterministic limits)
+- **Sortable by time:** ✅ Yes - 1ms (Twitter/Instagram) or 10ms (Sonyflake) precision
+- **Distributed generation:** ✅ Yes - only requires unique node IDs
+- **DB index-friendly:** ✅ Excellent - time-ordered, minimal fragmentation
+- **Size:** 64-bit (8 bytes) - half the size of UUIDs
+- **Throughput:** 4.1-6.5M IDs/sec per node (deterministic limits)
 
 **Database impact:** <5% fragmentation, sequential inserts, 50% smaller indexes than UUIDs, 2-4x faster inserts.
 
