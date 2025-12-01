@@ -43,6 +43,7 @@ Repository = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
 
 [dependency-groups]
 dev = [
+  "freezegun>=1.5.5",
   "ipython>=8.37.0",
   "mypy>=1.18.2",
   "pre-commit>=4.3.0",
@@ -119,6 +120,7 @@ select = [
 ignore = [
   "COM812", # Trailing comma missing
   "TRY003", # Avoid specifying long messages outside the exception class
+  "S101", # Use of `assert` detected
 ]
 
 [tool.ruff.format]
