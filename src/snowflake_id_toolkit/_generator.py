@@ -43,13 +43,10 @@ class SnowflakeIDGenerator(Generic[TID]):
         if not 0 <= node_id <= self._config.max_node_id:
             raise ValueError(f"Node ID must be between 0 and {self._config.max_node_id}")
 
-        if not 0 <= epoch <= self._config.max_timestamp:
-            raise ValueError(f"Epoch must be between 0 and {self._config.max_timestamp}")
-
         current_timestamp = self.get_current_timestamp()
 
-        if epoch > current_timestamp:
-            raise ValueError("Epoch cannot be in the future")
+        if not 0 <= epoch <= current_timestamp:
+            raise ValueError("Epoch must be between 0 and current timestamp")
 
         if current_timestamp - epoch > self._config.max_timestamp:
             raise MaxTimestampHasReachedError
