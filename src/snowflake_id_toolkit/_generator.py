@@ -59,7 +59,7 @@ class SnowflakeIDGenerator(Generic[TID]):
         self._node_id = node_id
         self._epoch = epoch
         self._sequence = 0
-        self._last_generation_timestamp = current_timestamp
+        self._last_generation_timestamp = -1
 
     def generate_next_id(self) -> TID:
         """Generate the next unique snowflake ID.
