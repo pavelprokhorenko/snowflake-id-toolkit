@@ -45,11 +45,11 @@ Repository = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
 dev = [
   "freezegun>=1.5.5",
   "ipython>=8.37.0",
-  "mypy>=1.18.2",
-  "pre-commit>=4.3.0",
-  "pytest>=8.4.2",
+  "mypy>=1.19.0",
+  "pre-commit>=4.5.0",
+  "pytest>=9.0.1",
   "pytest-xdist>=3.8.0",
-  "ruff>=0.14.0",
+  "ruff>=0.14.7",
 ]
 
 
