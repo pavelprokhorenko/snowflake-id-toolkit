@@ -78,8 +78,7 @@ class SnowflakeIDGenerator(Generic[TID]):
             if current_timestamp == self._last_generation_timestamp:
                 if self._sequence == self._config.max_sequence:
                     # Wait for the next timestamp
-                    while current_timestamp == self._last_generation_timestamp:
-                        current_timestamp = self.get_current_timestamp()
+                    current_timestamp = self._wait_for_next_timestamp()
                 self._sequence += 1
             elif current_timestamp > self._last_generation_timestamp:
                 self._sequence = 0
@@ -93,6 +92,21 @@ class SnowflakeIDGenerator(Generic[TID]):
                 | self._node_id << self._config.node_id_shift
                 | self._sequence
             )
+
+    def _wait_for_next_timestamp(self) -> int:
+        """Wait until the next timestamp becomes available.
+
+        This method busy-waits until the current timestamp advances beyond
+        the last generation timestamp. It's extracted as a separate method
+        to facilitate testing.
+
+        Returns:
+            The next timestamp that is greater than last_timestamp.
+        """
+        current_timestamp = self.get_current_timestamp()
+        while current_timestamp == self._last_generation_timestamp:
+            current_timestamp = self.get_current_timestamp()
+        return current_timestamp
 
     @classmethod
     def get_current_timestamp(cls) -> int:
