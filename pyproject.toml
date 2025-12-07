@@ -37,18 +37,19 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
-Changelog = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/blob/main/CHANGELOG.md"
 Releases = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/releases"
 Repository = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
+Issues = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/issues"
 
 [dependency-groups]
 dev = [
+  "freezegun>=1.5.5",
   "ipython>=8.37.0",
-  "mypy>=1.18.2",
-  "pre-commit>=4.3.0",
-  "pytest>=8.4.2",
+  "mypy>=1.19.0",
+  "pre-commit>=4.5.0",
+  "pytest>=9.0.1",
   "pytest-xdist>=3.8.0",
-  "ruff>=0.14.0",
+  "ruff>=0.14.7",
 ]
 
 
@@ -119,6 +120,8 @@ select = [
 ignore = [
   "COM812", # Trailing comma missing
   "TRY003", # Avoid specifying long messages outside the exception class
+  "S101", # Use of `assert` detected
+  "PLR2004", # Magic value used in comparison, consider replacing `n` with a constant variable
 ]
 
 [tool.ruff.format]
