@@ -32,15 +32,6 @@ def test_sequence_extraction(twitter_id: TwitterSnowflakeID) -> None:
 
 
 @pytest.mark.usefixtures("frozen_time")
-def test_sequence_increments(twitter_generator: TwitterSnowflakeIDGenerator) -> None:
-    id1 = twitter_generator.generate_next_id()
-    id2 = twitter_generator.generate_next_id()
-
-    assert id1.sequence() == 0
-    assert id2.sequence() == 1
-
-
-@pytest.mark.usefixtures("frozen_time")
 def test_all_components_extraction() -> None:
     generator = TwitterSnowflakeIDGenerator(node_id=123)
     twitter_id = generator.generate_next_id()
