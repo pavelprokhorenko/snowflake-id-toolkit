@@ -37,9 +37,9 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
-Changelog = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/blob/main/CHANGELOG.md"
 Releases = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/releases"
 Repository = "https://github.com/pavelprokhorenko/snowflake-id-toolkit"
+Issues = "https://github.com/pavelprokhorenko/snowflake-id-toolkit/issues"
 
 [dependency-groups]
 dev = [
