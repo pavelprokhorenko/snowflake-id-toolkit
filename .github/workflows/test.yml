@@ -1,0 +1,67 @@
+name: Test
+
+on:
+  push:
+    branches: ["**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+
+    env:
+      # uv
+      UV_CACHE_DIR: "${{ github.workspace }}/.cache/uv"
+      # mypy
+      MYPY_CACHE_DIR: "${{ github.workspace }}/.cache/mypy"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+            **/uv.lock
+
+      - name: Cache mypy
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.cache/mypy
+          key: mypy-${{ runner.os }}-${{ hashFiles('**/pyproject.toml', '**/uv.lock') }}
+          restore-keys: |
+            mypy-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          uv sync --frozen
+
+      - name: Run lint
+        run: |
+          make lint MYPY_COMMAND=mypy
+
+      - name: Run format check
+        run: |
+          make fmt
+
+      - name: Run tests
+        run: |
+          make test
