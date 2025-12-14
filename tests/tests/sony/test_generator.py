@@ -16,6 +16,7 @@ from snowflake_id_toolkit.sony import SonyflakeIDGenerator
 
 
 # Initialization tests
+@pytest.mark.usefixtures("frozen_time")
 def test_generator_initialization() -> None:
     generator = SonyflakeIDGenerator(node_id=100, epoch=100000000000)
     assert generator._node_id == 100  # noqa: SLF001
@@ -36,6 +37,7 @@ def test_generator_initialization_max_node_id() -> None:
     assert generator._node_id == max_node_id  # noqa: SLF001
 
 
+@pytest.mark.usefixtures("frozen_time")
 def test_generator_initialization_zero_epoch() -> None:
     generator = SonyflakeIDGenerator(node_id=0, epoch=0)
     assert generator._epoch == 0  # noqa: SLF001
@@ -80,6 +82,7 @@ def test_generator_epoch_too_far_in_past_raises_max_timestamp_error() -> None:
 
 
 # ID generation tests
+@pytest.mark.usefixtures("frozen_time")
 def test_generate_next_id_increments_sequence(sonyflake_generator: SonyflakeIDGenerator) -> None:
     id1 = sonyflake_generator.generate_next_id()
     id2 = sonyflake_generator.generate_next_id()
@@ -108,6 +111,7 @@ def test_generate_next_id_preserves_node_id() -> None:
         assert snowflake_id.node_id() == 123
 
 
+@pytest.mark.usefixtures("frozen_time")
 def test_generate_next_id_timestamp_increases(
     frozen_time: FrozenDateTimeFactory,
     sonyflake_generator: SonyflakeIDGenerator,
@@ -119,6 +123,7 @@ def test_generate_next_id_timestamp_increases(
     assert id1.timestamp_ms(epoch=1000000000000) + 10 == id2.timestamp_ms(epoch=1000000000000)
 
 
+@pytest.mark.usefixtures("frozen_time")
 def test_generate_next_id_epoch_affects_timestamp() -> None:
     """Verify that custom epoch affects timestamp calculation correctly."""
     epoch1 = 100000000000  # Earlier epoch
@@ -145,6 +150,7 @@ def test_generate_next_id_epoch_affects_timestamp() -> None:
     assert abs_ts1 == abs_ts2
 
 
+@pytest.mark.usefixtures("frozen_time")
 def test_generate_next_id_different_nodes_unique() -> None:
     """Verify that IDs from different nodes are unique."""
     gen1 = SonyflakeIDGenerator(node_id=1)
@@ -221,7 +227,9 @@ def test_sequence_overflow_calls_wait_for_next_timestamp(
 
 
 # Thread safety tests
-def test_generator_thread_safe_concurrent_generation(sonyflake_generator: SonyflakeIDGenerator) -> None:
+def test_generator_thread_safe_concurrent_generation(
+    sonyflake_generator: SonyflakeIDGenerator,
+) -> None:
     ids: list[SonyflakeID] = []
 
     def generate_ids() -> None:

@@ -10,3 +10,9 @@ lint:
 
 test:
 	uv run pytest --numprocesses logical --dist worksteal
+
+test-cov:
+	uv run pytest --numprocesses logical --dist worksteal --cov --cov-report=term-missing --cov-report=xml
+
+test-cov-html:
+	uv run pytest --numprocesses logical --dist worksteal --cov --cov-report=term-missing --cov-report=xml --cov-report=html
