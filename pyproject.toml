@@ -47,9 +47,10 @@ dev = [
   "ipython>=8.37.0",
   "mypy>=1.19.0",
   "pre-commit>=4.5.0",
-  "pytest>=9.0.1",
+  "pytest>=9.0.2",
+  "pytest-cov>=7.0.0",
   "pytest-xdist>=3.8.0",
-  "ruff>=0.14.7",
+  "ruff>=0.14.9",
 ]
 
 
@@ -145,3 +146,42 @@ disallow_untyped_defs = true
 disallow_untyped_calls = false
 strict = true
 strict_equality = true
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+  "--strict-markers",
+  "--strict-config",
+]
+
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+parallel = true
+omit = [
+  "*/tests/*",
+  "*/__pycache__/*",
+  "*/.venv/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "@abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
