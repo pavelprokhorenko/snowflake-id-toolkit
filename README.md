@@ -5,6 +5,7 @@ A high-performance Python library for generating distributed, time-ordered uniqu
 [![PyPI](https://img.shields.io/pypi/v/snowflake-id-toolkit.svg)](https://pypi.org/project/snowflake-id-toolkit/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/snowflake-id-toolkit.svg)](https://pypi.org/project/snowflake-id-toolkit/)
 [![License](https://img.shields.io/github/license/pavelprokhorenko/snowflake-id-toolkit.svg)](https://github.com/pavelprokhorenko/snowflake-id-toolkit/blob/main/LICENSE)
+[![codecov](https://codecov.io/gh/pavelprokhorenko/snowflake-id-toolkit/branch/main/graph/badge.svg)](https://codecov.io/gh/pavelprokhorenko/snowflake-id-toolkit)
 
 ## What are Snowflake IDs?
 
